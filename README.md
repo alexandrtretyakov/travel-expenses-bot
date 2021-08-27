@@ -1,2 +1,2 @@
-#travel expenses bot
+# travel expenses bot
 Телеграм-бот для учета финансовых расходов в поездке
