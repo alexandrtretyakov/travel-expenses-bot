@@ -17,4 +17,7 @@ text_messages = {
 
     'select_statistics_period':
         u'Выберите за какой период показать статистику:',
+
+    'delete_success':
+        u'Текущая поездка удалена!'
 }

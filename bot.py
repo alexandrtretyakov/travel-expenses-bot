@@ -82,6 +82,7 @@ def send_category(message):
     markup.row_width = 1
     markup.add(InlineKeyboardButton('За сегодня', callback_data='today'))
     markup.add(InlineKeyboardButton('За всю поездку', callback_data='trip'))
+    markup.add(InlineKeyboardButton('Удалить данные текущей поездки', callback_data='delete'))
 
     bot.send_message(message.chat.id, text_messages['select_statistics_period'], reply_markup=markup)
 
@@ -107,6 +108,9 @@ def callback_query(call):
               (Expense.user_id == user))
     sum = query.scalar()
 
+    if sum is None:
+        sum = 0
+
     message += u'\nВсего израсходовано: {} рублей'.format(sum)
 
     bot.send_message(call.message.chat.id, message, reply_markup=gen_main_keyboard())
@@ -131,9 +135,23 @@ def callback_query(call):
         where(Expense.user_id == user)
     sum = query.scalar()
 
+    if sum is None:
+        sum = 0
+
+    print(sum)
+
     message += u'\nВсего израсходовано: {} рублей'.format(sum)
 
     bot.send_message(call.message.chat.id, message, reply_markup=gen_main_keyboard())
+
+
+@bot.callback_query_handler(func=lambda call: call.data == 'delete')
+def callback_query(call):
+    """Удаляет все расходы для текущего пользователя"""
+    query = Expense.delete().where(Expense.user_id == user)
+    query.execute()
+
+    bot.send_message(call.message.chat.id, text_messages['delete_success'], reply_markup=gen_main_keyboard())
 
 
 bot.polling()
